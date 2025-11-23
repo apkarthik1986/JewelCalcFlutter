@@ -37,6 +37,6 @@ void main() {
     expect(find.text('⚙️ Base Values Configuration'), findsOneWidget);
     expect(find.text('Metal Rates (₹ per gram)'), findsOneWidget);
     expect(find.text('Wastage Settings'), findsOneWidget);
-    expect(find.text('Making Charges'), findsOneWidget);
+    expect(find.byKey(const Key('settings_making_charges')), findsOneWidget);
   });
 }
