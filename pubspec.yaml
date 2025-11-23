@@ -1,5 +1,5 @@
 name: myflutter
-description: A Flutter Android application built with GitHub Codespaces.
+description: A Flutter Android jewellery invoicing application built with GitHub Codespaces.
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -10,6 +10,11 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
+  pdf: ^3.10.7
+  printing: ^5.12.0
+  shared_preferences: ^2.2.2
+  intl: ^0.18.1
+  path_provider: ^2.1.2
 
 dev_dependencies:
   flutter_test:
