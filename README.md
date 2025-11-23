@@ -2,6 +2,12 @@
 
 A Flutter Android application that can be built using GitHub Codespaces and GitHub Actions.
 
+## 📖 Documentation
+
+- **[Quick Start Guide](QUICKSTART.md)** - Get started in 5 minutes
+- **[Detailed Building Instructions](BUILDING.md)** - Complete build guide
+- **[GitHub Actions Workflows](.github/workflows/README.md)** - CI/CD documentation
+
 ## 📱 Features
 
 - Simple counter app built with Flutter
