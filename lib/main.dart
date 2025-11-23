@@ -838,6 +838,7 @@ class _JewelCalcHomeState extends State<JewelCalcHome> {
               ),
               const Divider(),
               const Text('Making Charges',
+                  key: Key('settings_making_charges'),
                   style: TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 12),
               TextField(
