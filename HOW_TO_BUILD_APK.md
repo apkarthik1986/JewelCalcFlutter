@@ -16,9 +16,10 @@
 5. Click **"Run workflow"** in the dropdown
 6. Wait 3-5 minutes for the build to complete ⏱️
 7. Once done, scroll down to **"Artifacts"** section
-8. Click **"myflutter-release-apk"** to download (Note: There are two artifacts - both contain the same APK, this one has a 90-day retention)
-9. Extract the ZIP file
-10. You'll find the APK file inside ✅
+8. Look for an artifact with your app name (e.g., "myflutter-release-apk" or "app-release")
+9. Click to download the artifact
+10. Extract the ZIP file
+11. You'll find the APK file inside ✅
 
 **Install on Android**:
 - Transfer APK to your phone
@@ -61,8 +62,8 @@ flutter build apk --release
 
 ```bash
 # 1. Clone the repository (if not done already)
-git clone <your-repository-url>
-cd <repository-name>
+git clone https://github.com/YOUR_USERNAME/YOUR_REPO.git
+cd YOUR_REPO
 
 # 2. Install dependencies
 flutter pub get
