@@ -6,6 +6,7 @@ A Flutter Android application that can be built using GitHub Codespaces and GitH
 
 - **[Quick Start Guide](QUICKSTART.md)** - Get started in 5 minutes
 - **[Detailed Building Instructions](BUILDING.md)** - Complete build guide
+- **[Troubleshooting Guide](TROUBLESHOOTING.md)** - Fix common issues
 - **[GitHub Actions Workflows](.github/workflows/README.md)** - CI/CD documentation
 
 ## 📱 Features
