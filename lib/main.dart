@@ -52,6 +52,16 @@ class _JewelCalcHomeState extends State<JewelCalcHome> {
   final TextEditingController customerNameController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController mobileNumberController = TextEditingController();
+  final TextEditingController weightController = TextEditingController();
+  final TextEditingController wastageController = TextEditingController();
+  final TextEditingController makingChargesController = TextEditingController();
+  
+  // Settings dialog controllers
+  final Map<String, TextEditingController> metalRateControllers = {};
+  late final TextEditingController goldWastageController;
+  late final TextEditingController silverWastageController;
+  late final TextEditingController goldMcController;
+  late final TextEditingController silverMcController;
   
   String selectedType = 'Gold 22K/916';
   double weightGm = 0.0;
@@ -66,6 +76,14 @@ class _JewelCalcHomeState extends State<JewelCalcHome> {
   @override
   void initState() {
     super.initState();
+    // Initialize settings dialog controllers
+    for (var type in metalRates.keys) {
+      metalRateControllers[type] = TextEditingController();
+    }
+    goldWastageController = TextEditingController();
+    silverWastageController = TextEditingController();
+    goldMcController = TextEditingController();
+    silverMcController = TextEditingController();
     _loadBaseValues();
   }
 
@@ -89,7 +107,20 @@ class _JewelCalcHomeState extends State<JewelCalcHome> {
       silverWastagePercentage = prefs.getDouble('silver_wastage') ?? 0.0;
       goldMcPerGm = prefs.getDouble('gold_mc') ?? 0.0;
       silverMcPerGm = prefs.getDouble('silver_mc') ?? 0.0;
+      
+      // Update controllers with loaded values
+      _updateSettingsControllers();
     });
+  }
+  
+  void _updateSettingsControllers() {
+    for (var entry in metalRates.entries) {
+      metalRateControllers[entry.key]!.text = entry.value.toString();
+    }
+    goldWastageController.text = goldWastagePercentage.toString();
+    silverWastageController.text = silverWastagePercentage.toString();
+    goldMcController.text = goldMcPerGm.toString();
+    silverMcController.text = silverMcPerGm.toString();
   }
 
   Future<void> _saveBaseValues() async {
@@ -122,6 +153,15 @@ class _JewelCalcHomeState extends State<JewelCalcHome> {
       silverWastagePercentage = 0.0;
       goldMcPerGm = 0.0;
       silverMcPerGm = 0.0;
+      
+      // Reset controllers
+      for (var controller in metalRateControllers.values) {
+        controller.text = '0';
+      }
+      goldWastageController.text = '0';
+      silverWastageController.text = '0';
+      goldMcController.text = '0';
+      silverMcController.text = '0';
     });
 
     await prefs.setString('last_date', today);
@@ -142,6 +182,9 @@ class _JewelCalcHomeState extends State<JewelCalcHome> {
       customerNameController.clear();
       addressController.clear();
       mobileNumberController.clear();
+      weightController.clear();
+      wastageController.clear();
+      makingChargesController.clear();
       weightGm = 0.0;
       wastageGm = 0.0;
       makingCharges = 0.0;
@@ -199,9 +242,11 @@ class _JewelCalcHomeState extends State<JewelCalcHome> {
       pw.Page(
         pageFormat: PdfPageFormat(80 * PdfPageFormat.mm, double.infinity),
         build: (context) {
-          return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
+          return pw.Padding(
+            padding: const pw.EdgeInsets.all(10),
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
               pw.Center(
                 child: pw.Text('ESTIMATE',
                     style: pw.TextStyle(
@@ -304,7 +349,8 @@ class _JewelCalcHomeState extends State<JewelCalcHome> {
                 ],
               ),
             ],
-          );
+          ),
+        );
         },
       ),
     );
@@ -364,8 +410,8 @@ class _JewelCalcHomeState extends State<JewelCalcHome> {
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: _generatePdf,
-                icon: const Icon(Icons.picture_as_pdf),
-                label: const Text('Download PDF'),
+                icon: const Icon(Icons.print),
+                label: const Text('Print'),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.all(16),
                 ),
@@ -483,6 +529,7 @@ class _JewelCalcHomeState extends State<JewelCalcHome> {
               children: [
                 Expanded(
                   child: TextField(
+                    controller: weightController,
                     decoration: const InputDecoration(
                       labelText: 'Weight (gm)',
                       border: OutlineInputBorder(),
@@ -504,6 +551,7 @@ class _JewelCalcHomeState extends State<JewelCalcHome> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: TextField(
+                    controller: wastageController,
                     decoration: InputDecoration(
                       labelText: 'Wastage (gm)',
                       border: const OutlineInputBorder(),
@@ -580,10 +628,11 @@ class _JewelCalcHomeState extends State<JewelCalcHome> {
             const SizedBox(height: 12),
             if (mcType == 'Rupees')
               TextField(
+                controller: makingChargesController,
                 decoration: InputDecoration(
                   labelText: 'Making Charges (₹)',
                   border: const OutlineInputBorder(),
-                  hintText: _calculateMakingCharges().toStringAsFixed(2),
+                  hintText: makingCharges.toStringAsFixed(2),
                 ),
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
@@ -780,6 +829,9 @@ class _JewelCalcHomeState extends State<JewelCalcHome> {
   }
 
   void _showSettingsDialog() {
+    // Update controllers with current values before showing dialog
+    _updateSettingsControllers();
+    
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -800,8 +852,7 @@ class _JewelCalcHomeState extends State<JewelCalcHome> {
                         border: const OutlineInputBorder(),
                       ),
                       keyboardType: TextInputType.number,
-                      controller: TextEditingController(
-                          text: metalRates[type]!.toStringAsFixed(2)),
+                      controller: metalRateControllers[type],
                       onChanged: (value) {
                         metalRates[type] = double.tryParse(value) ?? 0.0;
                       },
@@ -817,8 +868,7 @@ class _JewelCalcHomeState extends State<JewelCalcHome> {
                   border: OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.number,
-                controller: TextEditingController(
-                    text: goldWastagePercentage.toStringAsFixed(2)),
+                controller: goldWastageController,
                 onChanged: (value) {
                   goldWastagePercentage = double.tryParse(value) ?? 0.0;
                 },
@@ -830,8 +880,7 @@ class _JewelCalcHomeState extends State<JewelCalcHome> {
                   border: OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.number,
-                controller: TextEditingController(
-                    text: silverWastagePercentage.toStringAsFixed(2)),
+                controller: silverWastageController,
                 onChanged: (value) {
                   silverWastagePercentage = double.tryParse(value) ?? 0.0;
                 },
@@ -847,8 +896,7 @@ class _JewelCalcHomeState extends State<JewelCalcHome> {
                   border: OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.number,
-                controller:
-                    TextEditingController(text: goldMcPerGm.toStringAsFixed(2)),
+                controller: goldMcController,
                 onChanged: (value) {
                   goldMcPerGm = double.tryParse(value) ?? 0.0;
                 },
@@ -860,8 +908,7 @@ class _JewelCalcHomeState extends State<JewelCalcHome> {
                   border: OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.number,
-                controller: TextEditingController(
-                    text: silverMcPerGm.toStringAsFixed(2)),
+                controller: silverMcController,
                 onChanged: (value) {
                   silverMcPerGm = double.tryParse(value) ?? 0.0;
                 },
@@ -873,7 +920,6 @@ class _JewelCalcHomeState extends State<JewelCalcHome> {
           TextButton(
             onPressed: () async {
               await _resetToDefaults();
-              Navigator.of(context).pop();
               setState(() {});
             },
             child: const Text('Reset to Defaults'),
@@ -902,6 +948,16 @@ class _JewelCalcHomeState extends State<JewelCalcHome> {
     customerNameController.dispose();
     addressController.dispose();
     mobileNumberController.dispose();
+    weightController.dispose();
+    wastageController.dispose();
+    makingChargesController.dispose();
+    for (var controller in metalRateControllers.values) {
+      controller.dispose();
+    }
+    goldWastageController.dispose();
+    silverWastageController.dispose();
+    goldMcController.dispose();
+    silverMcController.dispose();
     super.dispose();
   }
 }
