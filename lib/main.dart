@@ -115,12 +115,12 @@ class _JewelCalcHomeState extends State<JewelCalcHome> {
   
   void _updateSettingsControllers() {
     for (var entry in metalRates.entries) {
-      metalRateControllers[entry.key]!.text = entry.value.toString();
+      metalRateControllers[entry.key]!.text = entry.value == 0.0 ? '' : entry.value.toString();
     }
-    goldWastageController.text = goldWastagePercentage.toString();
-    silverWastageController.text = silverWastagePercentage.toString();
-    goldMcController.text = goldMcPerGm.toString();
-    silverMcController.text = silverMcPerGm.toString();
+    goldWastageController.text = goldWastagePercentage == 0.0 ? '' : goldWastagePercentage.toString();
+    silverWastageController.text = silverWastagePercentage == 0.0 ? '' : silverWastagePercentage.toString();
+    goldMcController.text = goldMcPerGm == 0.0 ? '' : goldMcPerGm.toString();
+    silverMcController.text = silverMcPerGm == 0.0 ? '' : silverMcPerGm.toString();
   }
 
   Future<void> _saveBaseValues() async {
@@ -156,12 +156,12 @@ class _JewelCalcHomeState extends State<JewelCalcHome> {
       
       // Reset controllers
       for (var controller in metalRateControllers.values) {
-        controller.text = '0';
+        controller.text = '';
       }
-      goldWastageController.text = '0';
-      silverWastageController.text = '0';
-      goldMcController.text = '0';
-      silverMcController.text = '0';
+      goldWastageController.text = '';
+      silverWastageController.text = '';
+      goldMcController.text = '';
+      silverMcController.text = '';
     });
 
     await prefs.setString('last_date', today);
@@ -629,22 +629,38 @@ class _JewelCalcHomeState extends State<JewelCalcHome> {
             ),
             const SizedBox(height: 12),
             if (mcType == 'Rupees')
-              TextField(
-                controller: makingChargesController,
-                decoration: InputDecoration(
-                  labelText: 'Making Charges (₹)',
-                  border: const OutlineInputBorder(),
-                  hintText: makingCharges.toStringAsFixed(2),
-                ),
-                keyboardType: TextInputType.number,
-                onChanged: (value) {
-                  setState(() {
-                    makingCharges = double.tryParse(value) ?? minMakingCharge;
-                    if (makingCharges < minMakingCharge) {
-                      makingCharges = minMakingCharge;
-                    }
-                  });
-                },
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextField(
+                    controller: makingChargesController,
+                    decoration: const InputDecoration(
+                      labelText: 'Making Charges (₹)',
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) {
+                      setState(() {
+                        makingCharges = double.tryParse(value) ?? minMakingCharge;
+                        if (makingCharges < minMakingCharge) {
+                          makingCharges = minMakingCharge;
+                        }
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      'Calculated: ₹${makingCharges.toStringAsFixed(2)}',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
               )
             else
               Column(
@@ -852,6 +868,7 @@ class _JewelCalcHomeState extends State<JewelCalcHome> {
                       decoration: InputDecoration(
                         labelText: '$type Rate',
                         border: const OutlineInputBorder(),
+                        hintText: 'e.g., 6500',
                       ),
                       keyboardType: TextInputType.number,
                       controller: metalRateControllers[type],
@@ -868,6 +885,7 @@ class _JewelCalcHomeState extends State<JewelCalcHome> {
                 decoration: const InputDecoration(
                   labelText: 'Gold Wastage (%)',
                   border: OutlineInputBorder(),
+                  hintText: 'e.g., 10',
                 ),
                 keyboardType: TextInputType.number,
                 controller: goldWastageController,
@@ -880,6 +898,7 @@ class _JewelCalcHomeState extends State<JewelCalcHome> {
                 decoration: const InputDecoration(
                   labelText: 'Silver Wastage (%)',
                   border: OutlineInputBorder(),
+                  hintText: 'e.g., 8',
                 ),
                 keyboardType: TextInputType.number,
                 controller: silverWastageController,
@@ -896,6 +915,7 @@ class _JewelCalcHomeState extends State<JewelCalcHome> {
                 decoration: const InputDecoration(
                   labelText: 'Gold MC (₹ per gram)',
                   border: OutlineInputBorder(),
+                  hintText: 'e.g., 350',
                 ),
                 keyboardType: TextInputType.number,
                 controller: goldMcController,
@@ -908,6 +928,7 @@ class _JewelCalcHomeState extends State<JewelCalcHome> {
                 decoration: const InputDecoration(
                   labelText: 'Silver MC (₹ per gram)',
                   border: OutlineInputBorder(),
+                  hintText: 'e.g., 200',
                 ),
                 keyboardType: TextInputType.number,
                 controller: silverMcController,
