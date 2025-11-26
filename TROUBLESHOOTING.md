@@ -239,7 +239,7 @@ For **Physical Device**:
 
 ### App Not Installed - "Package appears to be invalid"
 
-**Symptom**: Installation fails with error message "App not installed as the package appear to be invalid"
+**Symptom**: Installation fails with error message "App not installed as the package appears to be invalid"
 
 **Root Cause**: The AndroidManifest.xml is missing the required `package` attribute in the `<manifest>` tag.
 
